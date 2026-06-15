@@ -38,3 +38,21 @@ export function parseCSVText(text) {
   }
   return lines;
 }
+
+export function analyzeExpensesCSV(rows) {
+  const header = rows[0];
+  const dataRows = rows.slice(1);
+  return dataRows.map((row, idx) => ({
+    rowNumber: idx + 2,
+    proposed: {
+      date: row[0],
+      description: row[1],
+      amount: parseFloat(row[2]) || 0,
+      currency: row[3] || 'INR',
+      paid_by: row[4],
+      split_type: row[5]
+    },
+    approved: true,
+    errors: []
+  }));
+}
