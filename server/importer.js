@@ -58,3 +58,4 @@ export function analyzeExpensesCSV(rows) {
 }
 
 // Duplicate checks stub
+// Active period checking
