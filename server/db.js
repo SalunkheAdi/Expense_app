@@ -13,7 +13,27 @@ const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:post
 export let pool = null;
 
 export async function initDb() {
-  pool = new Pool({ connectionString });
+  // 4. Seed default users
+    const usersCountRes = await dbClient.query(`SELECT COUNT(*) FROM users`);
+    const count = parseInt(usersCountRes.rows[0].count, 10);
+    if (count === 0) {
+      console.log('Seeding default users...');
+      const defaultUsers = [
+        { name: 'aisha', display_name: 'Aisha', pin: '1111' },
+        { name: 'rohan', display_name: 'Rohan', pin: '2222' },
+        { name: 'priya', display_name: 'Priya', pin: '3333' },
+        { name: 'meera', display_name: 'Meera', pin: '4444' },
+        { name: 'sam', display_name: 'Sam', pin: '5555' },
+        { name: 'dev', display_name: 'Dev', pin: '6666' }
+      ];
+      for (const u of defaultUsers) {
+        await dbClient.query(
+          `INSERT INTO users (name, display_name, pin) VALUES ($1, $2, $3)`,
+          [u.name, u.display_name, u.pin]
+        );
+      }
+      console.log('✓ Default users seeded.');
+    }
   const dbClient = await pool.connect();
   try {
     console.log('Running database migrations...');
